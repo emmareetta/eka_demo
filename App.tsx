@@ -1,36 +1,42 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View, Alert } from 'react-native';
 
 export default function App() {
-  const [luku1, setLuku1] = useState("");
-  const [luku2, setLuku2] = useState("");
+  const [number, setNumber] = useState("");
+  const [randomNumber, setRandomNumber] = useState(Math.floor(Math.random() * 100) +1);
+  const [guesses, setGuesses] = useState(0);
 
-  const [result, setResult] = useState<number | undefined>(undefined);
+  const [result, setResult] = useState("");
 
-  const laskeYhteen = () => {
-    setResult(parseInt(luku1) + parseInt(luku2)) 
+  const guessNumber = () => {
+    setGuesses(guesses + 1)
+    if (parseInt(number) < randomNumber){
+      setResult(`Your guess ${number} is too low`)
+    } else if (parseInt(number) > randomNumber){
+      setResult(`Your guess ${number} is too high`)
+    } else {
+      Alert.alert("", `You guessed the number in ${guesses} guesses`, [
+        {text: 'OK', onPress: () => {
+          setNumber("")
+          setRandomNumber(Math.floor(Math.random() * 100) +1)
+          setGuesses(0)
+          setResult("")
+        }},
+      ]);
+    }
   }
 
-  const laskeErotus = () => {
-    setResult(parseInt(luku1) - parseInt(luku2)) 
-  }
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      {result ? <Text>{result}</Text> : <Text>Guess a number between 1 - 100</Text>}
       <TextInput style={{width: 200, borderColor: 'gray', borderWidth: 1}}
-      onChangeText={text => setLuku1(text)} value = {luku1} inputMode='numeric'/>
-      <TextInput style={{width: 200, borderColor: 'gray', borderWidth: 1}}
-      onChangeText={text => setLuku2(text)} value = {luku2} inputMode='numeric'/>
+      onChangeText={text => setNumber(text)} value = {number} inputMode='numeric'/>
       <View style={{width: 100, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
         <Button
-          onPress={laskeYhteen}
-          title="+"
-          />
-        <Button
-          onPress={laskeErotus}
-          title="-"
+          onPress={guessNumber}
+          title="MAKE GUESS"
           />
       </View>
       
